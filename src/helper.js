@@ -1,97 +1,52 @@
-export function formatPrice(cents) {
-  return (cents / 100).toLocaleString("en-US", {
-    style: "currency",
-    currency: "USD"
-  });
+export function calcAnswer(formula) {
+  let answer = formula;
+  let prevAnswer = answer;
+
+  //find * & / operations
+  //loop through until all * and / operations are done
+  do {
+    prevAnswer = answer;
+    answer = answer
+      .replace(/(-?\d+\.?\d*)\*(-?\d+\.?\d*)/g, mult)
+      .replace(/(-?\d+\.?\d*)\/(-?\d+\.?\d*)/g, divide);
+    console.log(answer);
+  } while (answer != prevAnswer);
+
+  do {
+    prevAnswer = answer;
+    answer = answer
+      .replace(/(-?\d+\.?\d*)\+(-?\d+\.?\d*)/g, add)
+      .replace(/(-?\d+\.?\d*)-(-?\d+\.?\d*)/g, subtract);
+    console.log(answer);
+  } while (answer != prevAnswer);
+
+  return parseFloat(answer).toFixed(4).toString();
 }
 
-export function rando(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
+//call back function => num1 * num2
+const mult = (op, num1, num2) => {
+  const first = parseFloat(num1);
+  const second = parseFloat(num2);
+  return first * second;
+};
 
-export function slugify(text) {
-  return text
-    .toString()
-    .toLowerCase()
-    .replace(/\s+/g, "-")
-    .replace(/[^\w-]+/g, "")
-    .replace(/--+/g, "-")
-    .replace(/^-+/, "")
-    .replace(/-+$/, "");
-}
+//call back function => num1 / num2
+const divide = (op, num1, num2) => {
+  const first = parseFloat(num1);
+  const second = parseFloat(num2);
+  return first / second;
+};
 
-export function getFunName() {
-  const adjectives = [
-    "adorable",
-    "beautiful",
-    "clean",
-    "drab",
-    "elegant",
-    "fancy",
-    "glamorous",
-    "handsome",
-    "long",
-    "magnificent",
-    "old-fashioned",
-    "plain",
-    "quaint",
-    "sparkling",
-    "ugliest",
-    "unsightly",
-    "angry",
-    "bewildered",
-    "clumsy",
-    "defeated",
-    "embarrassed",
-    "fierce",
-    "grumpy",
-    "helpless",
-    "itchy",
-    "jealous",
-    "lazy",
-    "mysterious",
-    "nervous",
-    "obnoxious",
-    "panicky",
-    "repulsive",
-    "scary",
-    "thoughtless",
-    "uptight",
-    "worried"
-  ];
+//call back function => num1 + num2
+const add = (op, num1, num2) => {
+  const first = parseFloat(num1);
+  const second = parseFloat(num2);
+  return first + second;
+};
 
-  const nouns = [
-    "women",
-    "men",
-    "children",
-    "teeth",
-    "feet",
-    "people",
-    "leaves",
-    "mice",
-    "geese",
-    "halves",
-    "knives",
-    "wives",
-    "lives",
-    "elves",
-    "loaves",
-    "potatoes",
-    "tomatoes",
-    "cacti",
-    "foci",
-    "fungi",
-    "nuclei",
-    "syllabuses",
-    "analyses",
-    "diagnoses",
-    "oases",
-    "theses",
-    "crises",
-    "phenomena",
-    "criteria",
-    "data"
-  ];
-
-  return `${rando(adjectives)}-${rando(adjectives)}-${rando(nouns)}`;
-}
+//call back function => num1 - num2
+const subtract = (op, num1, num2) => {
+  const first = parseFloat(num1);
+  const second = parseFloat(num2);
+  return first - second;
+};
