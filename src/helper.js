@@ -9,7 +9,7 @@ export function calcAnswer(formula) {
     answer = answer
       .replace(/(-?\d+\.?\d*)\*(-?\d+\.?\d*)/g, mult)
       .replace(/(-?\d+\.?\d*)\/(-?\d+\.?\d*)/g, divide);
-    console.log(answer);
+    // console.log(answer);
   } while (answer != prevAnswer);
 
   do {
@@ -17,10 +17,10 @@ export function calcAnswer(formula) {
     answer = answer
       .replace(/(-?\d+\.?\d*)\+(-?\d+\.?\d*)/g, add)
       .replace(/(-?\d+\.?\d*)-(-?\d+\.?\d*)/g, subtract);
-    console.log(answer);
+    // console.log(answer);
   } while (answer != prevAnswer);
 
-  return parseFloat(answer).toFixed(4).toString();
+  return +parseFloat(answer).toFixed(4).toString();
 }
 
 //call back function => num1 * num2

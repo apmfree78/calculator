@@ -1,5 +1,6 @@
 import React from "react";
 import { calcAnswer } from "../helper";
+const space = " ".repeat(10);
 
 class App extends React.Component {
   state = {
@@ -8,24 +9,101 @@ class App extends React.Component {
     inputString: "", //the full expression inputed by user
   };
 
+  // handling numberical \d or operator [*/+-] input by user
   handleInput = (value) => {
-    this.setState({ input: value });
+    const input = value;
+    let inputString = this.state.inputString;
+    let answer = this.state.answer;
+    const prevInput = this.state.input;
+
+    //regex patterns
+    // const endWithOperator = /(\*|\/|-|\+)$/;
+    // const endWithNumber = /\d+$/;
+    const beginningZero = /(^0|\*0|\/0|-0|\+0)$/;
+    const endWithPeriodZero = /\.0+$/;
+    const operators = "*/+-";
+
+    //********VALIDATIONS AND ASCERTIONS ******* */
+    //checking if there's an answer on the screen
+    if (answer != "") {
+      //resetting screen
+      answer = "";
+      inputString = "";
+    }
+
+    //check if consecutive operators are input **, */ , +* , etc
+    //if so, only accepting last operator
+    //ALSO check if multiple zeros are added in that are not followed by period
+    //SO it's NOT 1.0001 but 0001 , first is fine , second is not
+    //PLUS CHECK if there are 2 decimals submitted
+    if (
+      (operators.includes(input) &&
+        operators.includes(prevInput) &&
+        input != "-") ||
+      (input == "0" &&
+        beginningZero.test(inputString) &&
+        !endWithPeriodZero.test(inputString)) ||
+      (input == "." && prevInput == ".")
+    ) {
+      //in this case use only current operator and disregard prevous operator
+      //OR remove extra zero
+      inputString = inputString.substring(0, inputString.length - 1);
+    }
+
+    inputString += input;
+
+    this.setState({ answer, input, inputString });
+  };
+
+  // function to handle when user presses '='
+  calculateInput = () => {
+    let inputString = this.state.inputString;
+    const prevInput = this.state.input;
+    const operators = "*/+-";
+
+    //VALIDATION **************
+    //checking if last character is an operator,
+    //if so removing it
+    if (operators.includes(prevInput)) {
+      //in this case operator
+      inputString = inputString.substring(0, inputString.length - 1);
+    }
+
+    //parcing equation user submitted and
+    //calculating result
+    const answer = calcAnswer(inputString);
+    console.log(answer);
+    //appending result to inputString to display on screen
+    inputString = inputString + "=" + answer;
+
+    //setting input to answer to show on screen
+    const input = answer;
+
+    //updating state
+    this.setState({ answer, input, inputString });
+  };
+
+  // function to handle when user presses '='
+  clearState = () => {
+    //reset state to initial conditions
+    const answer = "";
+    const inputString = "";
+    const input = "0";
+
+    //updating state
+    this.setState({ answer, input, inputString });
   };
 
   render() {
-    // const quoteKeys = Object.keys(this.state.quotes);
-    // const quoteArray = quoteKeys.map((key) => <li>{this.state.quotes[key].quote}</li>);
-    const results = calcAnswer("-2.16*5.2-2.13*5/2+-10");
+    const { answer, input, inputString } = this.state;
 
     return (
       <div id='calculator' className='container row'>
-        <div id='display'>
-          <span id='inputstring' className='placeholder col-12 placeholder-lg'>
-            &nbsp;
-          </span>
-          <span id='input' className='placeholder col-12 placeholder-lg'>
-            &nbsp;
-          </span>
+        <div
+          id='display'
+          className='d-flex flex-column justify-content-left align-items-end'>
+          <span id='inputstring'>{inputString}</span>
+          <span id='input'>{input}</span>
         </div>
         {/* top row below screen */}
         <div id='left-pad' className='col-9'>
@@ -35,7 +113,7 @@ class App extends React.Component {
               type='submit'
               id='clear'
               index='clear'
-              onClick={() => this.handleInput("0")}>
+              onClick={this.clearState}>
               AC
             </button>
             <button
@@ -179,16 +257,11 @@ class App extends React.Component {
             <button
               className='col-12'
               type='submit'
-              id='equal'
-              index='equal'
-              onClick={() => this.handleInput("=")}>
+              id='equals'
+              index='equals'
+              onClick={this.calculateInput}>
               =
             </button>
-            <div>
-              <span id='fillspot' className='placeholder col-12 placeholder-lg'>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              </span>
-            </div>
           </div>
         </div>
         {/* end of right pad */}
