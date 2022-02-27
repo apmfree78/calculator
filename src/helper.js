@@ -1,3 +1,7 @@
+// main function that calculates the result of the formula inputed by the user
+// so if user inputs "2*3+5*5+10/2" , it will take this string and return "36"
+// accepts negatives numbers and floating point numbers
+//operations accepted currently : * / + -
 export function calcAnswer(formula) {
   let answer = formula;
   let prevAnswer = answer;
