@@ -1,6 +1,5 @@
 import React from "react";
 import { calcAnswer } from "../helper";
-const space = " ".repeat(10);
 
 class App extends React.Component {
   state = {
@@ -46,12 +45,13 @@ class App extends React.Component {
       (input == "." && prevInput == ".")
     ) {
       //in this case use only current operator and disregard prevous operator
-      //OR remove extra zero
+      //OR remove extra zero or period
       inputString = inputString.substring(0, inputString.length - 1);
     }
 
     inputString += input;
 
+    //updating state
     this.setState({ answer, input, inputString });
   };
 
@@ -69,10 +69,10 @@ class App extends React.Component {
       inputString = inputString.substring(0, inputString.length - 1);
     }
 
-    //parcing equation user submitted and
+    //parcing equation (inputString) user submitted and
     //calculating result
     const answer = calcAnswer(inputString);
-    console.log(answer);
+    // console.log(answer);
     //appending result to inputString to display on screen
     inputString = inputString + "=" + answer;
 
@@ -83,7 +83,7 @@ class App extends React.Component {
     this.setState({ answer, input, inputString });
   };
 
-  // function to handle when user presses '='
+  // function to handle when user presses 'AC'
   clearState = () => {
     //reset state to initial conditions
     const answer = "";
@@ -99,13 +99,15 @@ class App extends React.Component {
 
     return (
       <div id='calculator' className='container row'>
+        {/* top black screen showing formula and current input as it's
+        submitted by user */}
         <div
           id='display'
           className='d-flex flex-column justify-content-around align-items-end'>
           <span id='inputstring'>{inputString}</span>
           <span id='input'>{input}</span>
         </div>
-        {/* top row below screen */}
+        {/* top row below main screen */}
         <div id='left-pad' className='col-9'>
           <div className='row'>
             <button
@@ -207,7 +209,7 @@ class App extends React.Component {
               9
             </button>
           </div>
-          {/* forth row of numbers */}
+          {/* forth row of numbers + period */}
           <div className='row'>
             <button
               className='col-8'
@@ -227,7 +229,9 @@ class App extends React.Component {
             </button>
           </div>
         </div>
-        {/*end of left-pad */}
+        {/*end of left-pad, left side of key pad
+        now beginning right pad that includes remaining operations
+        and '=' */}
         <div id='right-pad' className='col-3'>
           <div className='row'>
             <button
