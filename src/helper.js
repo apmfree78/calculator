@@ -12,6 +12,8 @@ export function calcAnswer(formula) {
     // console.log(answer);
   } while (answer != prevAnswer);
 
+  //find + & - operations
+  //loop through until all + and - operations are done
   do {
     prevAnswer = answer;
     answer = answer
@@ -20,6 +22,7 @@ export function calcAnswer(formula) {
     // console.log(answer);
   } while (answer != prevAnswer);
 
+  //returning final result correctly formatted
   return +parseFloat(answer).toFixed(4).toString();
 }
 

@@ -101,7 +101,7 @@ class App extends React.Component {
       <div id='calculator' className='container row'>
         <div
           id='display'
-          className='d-flex flex-column justify-content-left align-items-end'>
+          className='d-flex flex-column justify-content-around align-items-end'>
           <span id='inputstring'>{inputString}</span>
           <span id='input'>{input}</span>
         </div>
