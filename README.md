@@ -1,1 +1,1 @@
-# quote-machine
+# calculator
