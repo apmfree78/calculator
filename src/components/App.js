@@ -106,13 +106,13 @@ const App = () => {
       //calculating result
       const ans = calcAnswer(inputStr);
 
+      //appending result to inputString to display on screen
+      inputStr = inputStr + '=' + ans;
+
       //adding formula to formula state variable
       const formulasCopy = [...formulas];
       formulasCopy.unshift(inputStr);
       setFormulas(formulasCopy);
-
-      //appending result to inputString to display on screen
-      inputStr = inputStr + '=' + answer;
 
       //setting state
       setAnswer(ans);

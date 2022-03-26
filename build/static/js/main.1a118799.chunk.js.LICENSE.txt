@@ -1,0 +1,1 @@
+//!isNaN true => prevInput is a number, which means we need to
