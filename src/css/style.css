@@ -50,7 +50,7 @@ button:active {
   border: 1px solid black;
   margin-bottom: 3px;
 }
-#inputstring {
+.inputstring {
   color: orange;
   font-size: 18px;
 }
@@ -59,4 +59,24 @@ button:active {
   color: white;
   padding-top: 2px;
   font-size: 20px;
+}
+#formulas {
+  background-color: rgb(2, 1, 1);
+  border: 1px solid black;
+  margin: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  min-width: 30vw;
+}
+
+.formulalist {
+  display: inline;
+  padding: 3px;
+  min-width: 3rem;
+}
+
+#formula {
+  margin-right: 7px;
+  padding: 2px 5px 2px 5px;
+  border-bottom: 2px solid aqua;
 }

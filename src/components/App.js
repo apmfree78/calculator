@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { calcAnswer } from '../helper';
+import EquationList from './EquationList';
 import KeyBoard from './KeyBoard';
 //add new operators to below global variables
 const operators = '*/+-^';
@@ -11,9 +12,14 @@ const App = () => {
   //input is the current user input from key pad
   //inputString is the formula user is typing out,
   //and that is showing up on screen
+  //formulas is an array of formula imputed by user
+  //this will be display below the calculator as a list
   const [answer, setAnswer] = useState('');
   const [input, setInput] = useState('0');
   const [inputString, setInputString] = useState('');
+  const [formulas, setFormulas] = useState(
+    JSON.parse(localStorage.getItem('formulas')) || []
+  );
 
   // handling numberical \d or operator [*/+-] input by user
   const handleInput = (value) => {
@@ -30,7 +36,7 @@ const App = () => {
 
     //********VALIDATIONS AND ASCERTIONS ******* */
     //checking if there's an answer on the screen
-    if (ans != '') {
+    if (ans !== '') {
       //resetting screen
       ans = '';
       inputStr = '';
@@ -44,11 +50,11 @@ const App = () => {
     //PLUS CHECK if there are 2 decimals submitted
     if (
       (operators.includes(prevInput) && operatorNoMinus.includes(inputVal)) ||
-      (inputVal == '-' && prevInput == '-') ||
-      (inputVal == '0' &&
+      (inputVal === '-' && prevInput === '-') ||
+      (inputVal === '0' &&
         beginningZero.test(inputStr) &&
         !endWithPeriodZero.test(inputStr)) ||
-      (inputVal == '.' && prevInput == '.')
+      (inputVal === '.' && prevInput === '.')
     ) {
       //in this case use only current operator and disregard prevous operator
       //OR remove extra zero or period
@@ -57,11 +63,17 @@ const App = () => {
 
     //PLUS check if not trig function is followed by an operation
     //such as sin*,cos+, sin/, sin+ etc .  HOWEVER, sin- or cos- is fine
+    //ALSO CHECKING if previous input is number ie 2sin or 5cos, must add *
+    //so have 2*sin, 5*cos ...
     if (
       trigOperators.includes(prevInput) &&
       operatorNoMinus.includes(inputVal)
     ) {
       return;
+    } else if (!isNaN(prevInput) && trigOperators.includes(inputVal)) {
+      //!isNaN true => prevInput is a number, which means we need to
+      //add '*' in front of trig function
+      inputStr += '*';
     }
 
     //Finally after all the above checks and validations complete
@@ -89,11 +101,16 @@ const App = () => {
 
     //check to make sure there's not an answer on the screen
     //also check that inputStr is not empty
-    if (answer == '' && inputStr != '') {
+    if (answer === '' && inputStr !== '') {
       //parcing equation (inputString) user submitted and
       //calculating result
       const ans = calcAnswer(inputStr);
-      // console.log(answer);
+
+      //adding formula to formula state variable
+      const formulasCopy = [...formulas];
+      formulasCopy.unshift(inputStr);
+      setFormulas(formulasCopy);
+
       //appending result to inputString to display on screen
       inputStr = inputStr + '=' + answer;
 
@@ -112,22 +129,38 @@ const App = () => {
     setInputString('');
   };
 
+  const removeFormula = (index) => {
+    const formulasCopy = [...formulas];
+    formulasCopy.splice(index, 1);
+    setFormulas(formulasCopy);
+  };
+
+  //useEffect hook to add formulas to local storage
+  useEffect(() => {
+    localStorage.setItem('formulas', JSON.stringify(formulas));
+  }, [formulas]);
+
   return (
-    <div id='calculator' className='container row'>
-      {/* top black screen showing formula and current input as it's
+    <div className='d-flex flex-column align-items-center'>
+      <div id='calculator' className='container row'>
+        {/* top black screen showing formula and current input as it's
         submitted by user */}
-      <div
-        id='display'
-        className='d-flex flex-column justify-content-around align-items-end'>
-        <span id='inputstring'>{inputString}</span>
-        <span id='input'>{input}</span>
+        <div
+          id='display'
+          className='d-flex flex-column justify-content-around align-items-end'>
+          <span className='inputstring'>{inputString}</span>
+          <span id='input'>{input}</span>
+        </div>
+        {/* main keyboard for calculator where user inputs formula */}
+        <KeyBoard
+          clearState={clearState}
+          handleInput={handleInput}
+          calculateInput={calculateInput}
+        />
       </div>
-      {/* main keyboard for calculator where user inputs formula */}
-      <KeyBoard
-        clearState={clearState}
-        handleInput={handleInput}
-        calculateInput={calculateInput}
-      />
+      {/* list of equations below calculation, hit 'x' to remove
+      these are saved in local storage too */}
+      <EquationList formulas={formulas} removeFormula={removeFormula} />
     </div>
   );
 };
