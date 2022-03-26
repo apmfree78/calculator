@@ -7,6 +7,8 @@ const operators = {
   '*': (a, b) => a * b,
   '/': (a, b) => a / b,
   '^': (a, b) => a ** b,
+  sin: (x) => Math.sin(x),
+  cos: (x) => Math.cos(x),
 };
 
 //call back function for reg replace that will
@@ -19,6 +21,23 @@ const calc = (full, num1, op, num2) => {
     return operators[op](first, second);
   }
 };
+//call back function for reg replace that will
+//execute calculation and return result
+//works for trig operators: sin, cos
+const trig = (full, op, num1) => {
+  if (op in operators) {
+    const first = parseFloat(num1);
+    return operators[op](num1);
+  }
+};
+
+//call back function for braketed formula
+// for  1+2*(5+1)+4/(1+1) => formula => 5+1 and 1+1
+const bracket = (full, formula) => {
+  console.log(formula);
+  return calcAnswer(formula);
+};
+
 // main function that calculates the result of the formula inputed by the user
 // so if user inputs "2*3^2+5*5+10/2" , it will take this string and return "36"
 // accepts negatives numbers and floating point numbers
@@ -27,12 +46,26 @@ export function calcAnswer(formula) {
   let answer = formula;
   let prevAnswer = answer;
 
+  do {
+    prevAnswer = answer;
+    answer = answer.replace(/\(([^\)\(]*)\)/g, bracket);
+    console.log(answer);
+  } while (answer != prevAnswer);
+
+  //find trig operations
+  //loop through until all ^ operations are done
+  do {
+    prevAnswer = answer;
+    answer = answer.replace(/(sin|cos)(-?\d+\.?\d*)/g, trig);
+    // console.log(answer);
+  } while (answer != prevAnswer);
+
   //find ^ operations
   //loop through until all ^ operations are done
   do {
     prevAnswer = answer;
     answer = answer.replace(/((?:(?<!\d)-?)\d+\.?\d*)(\^)(-?\d+\.?\d*)/g, calc);
-    console.log(answer);
+    // console.log(answer);
   } while (answer != prevAnswer);
 
   //find * & / operations
@@ -42,7 +75,7 @@ export function calcAnswer(formula) {
     answer = answer
       .replace(/((?:(?<!\d)-?)\d+\.?\d*)(\*)(-?\d+\.?\d*)/g, calc)
       .replace(/((?:(?<!\d)-?)\d+\.?\d*)(\/)(-?\d+\.?\d*)/g, calc);
-    console.log(answer);
+    // console.log(answer);
   } while (answer != prevAnswer);
 
   //find - operations
@@ -50,7 +83,7 @@ export function calcAnswer(formula) {
   do {
     prevAnswer = answer;
     answer = answer.replace(/(-?\d+\.?\d*)(-)(-?\d+\.?\d*)/g, calc);
-    console.log(answer);
+    // console.log(answer);
   } while (answer != prevAnswer);
 
   //find + operations
@@ -58,7 +91,7 @@ export function calcAnswer(formula) {
   do {
     prevAnswer = answer;
     answer = answer.replace(/(-?\d+\.?\d*)(\+)(-?\d+\.?\d*)/g, calc);
-    console.log(answer);
+    // console.log(answer);
   } while (answer != prevAnswer);
 
   //returning final result correctly formatted

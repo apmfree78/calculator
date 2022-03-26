@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { calcAnswer } from '../helper';
-import KeyPad from './KeyPad';
-import KeyPadOps from './KeyPadOps';
+import KeyBoard from './KeyBoard';
 //add new operators to below global variables
 const operators = '*/+-^';
 const operatorNoMinus = '*/+^';
+const trigOperators = 'sincos';
 
 const App = () => {
+  // answer = result of calculation
+  //input is the current user input from key pad
+  //inputString is the formula user is typing out,
+  //and that is showing up on screen
   const [answer, setAnswer] = useState('');
   const [input, setInput] = useState('0');
   const [inputString, setInputString] = useState('');
@@ -34,6 +38,7 @@ const App = () => {
 
     //check if consecutive operators are input **, */ , +* , etc
     //if so, only accepting last operator
+    //because it just makes the number following it a negative
     //ALSO check if multiple zeros are added in that are not followed by period
     //SO it's NOT 1.0001 but 0001 , first is fine , second is not
     //PLUS CHECK if there are 2 decimals submitted
@@ -48,6 +53,15 @@ const App = () => {
       //in this case use only current operator and disregard prevous operator
       //OR remove extra zero or period
       inputStr = inputStr.substring(0, inputStr.length - 1);
+    }
+
+    //PLUS check if not trig function is followed by an operation
+    //such as sin*,cos+, sin/, sin+ etc .  HOWEVER, sin- or cos- is fine
+    if (
+      trigOperators.includes(prevInput) &&
+      operatorNoMinus.includes(inputVal)
+    ) {
+      return;
     }
 
     //Finally after all the above checks and validations complete
@@ -108,95 +122,12 @@ const App = () => {
         <span id='inputstring'>{inputString}</span>
         <span id='input'>{input}</span>
       </div>
-      {/* top row below main screen */}
-      <div id='left-pad' className='col-9'>
-        <div className='row'>
-          <KeyPad grid='col-8' index='clear' onClickFunction={clearState}>
-            AC
-          </KeyPad>
-          <KeyPadOps grid='col-4' onClickFunction={handleInput}>
-            /
-          </KeyPadOps>
-        </div>
-        {/* ********************************************* */}
-        {/* ********************************************* */}
-
-        {/* first row of numbers  */}
-        <div className='row'>
-          <KeyPadOps grid='col-4' onClickFunction={handleInput}>
-            1
-          </KeyPadOps>
-          <KeyPadOps grid='col-4' onClickFunction={handleInput}>
-            2
-          </KeyPadOps>
-          <KeyPadOps grid='col-4' onClickFunction={handleInput}>
-            3
-          </KeyPadOps>
-        </div>
-        {/* ********************************************* */}
-        {/* ********************************************* */}
-
-        {/* second row of numbers */}
-        <div className='row'>
-          <KeyPadOps grid='col-4' onClickFunction={handleInput}>
-            4
-          </KeyPadOps>
-          <KeyPadOps grid='col-4' onClickFunction={handleInput}>
-            5
-          </KeyPadOps>
-          <KeyPadOps grid='col-4' onClickFunction={handleInput}>
-            6
-          </KeyPadOps>
-        </div>
-        {/* ********************************************* */}
-        {/* ********************************************* */}
-        {/* third row of numbers */}
-        <div className='row'>
-          <KeyPadOps grid='col-4' onClickFunction={handleInput}>
-            7
-          </KeyPadOps>
-          <KeyPadOps grid='col-4' onClickFunction={handleInput}>
-            8
-          </KeyPadOps>
-          <KeyPadOps grid='col-4' onClickFunction={handleInput}>
-            9
-          </KeyPadOps>
-        </div>
-        {/* ********************************************* */}
-        {/* ********************************************* */}
-        {/* forth row of numbers + period */}
-        <div className='row'>
-          <KeyPadOps grid='col-8' onClickFunction={handleInput}>
-            0
-          </KeyPadOps>
-          <KeyPadOps grid='col-4' onClickFunction={handleInput}>
-            .
-          </KeyPadOps>
-        </div>
-      </div>
-      {/*end of left-pad, left side of key pad
-        now beginning right pad that includes remaining operations
-        and '=' */}
-      <div id='right-pad' className='col-3'>
-        <div className='row'>
-          <KeyPadOps grid='col-12' onClickFunction={handleInput}>
-            ^
-          </KeyPadOps>
-          <KeyPadOps grid='col-12' onClickFunction={handleInput}>
-            *
-          </KeyPadOps>
-          <KeyPadOps grid='col-12' onClickFunction={handleInput}>
-            -
-          </KeyPadOps>
-          <KeyPadOps grid='col-12' onClickFunction={handleInput}>
-            +
-          </KeyPadOps>
-          <KeyPad grid='col-12' index='clear' onClickFunction={calculateInput}>
-            =
-          </KeyPad>
-        </div>
-      </div>
-      {/* end of right pad */}
+      {/* main keyboard for calculator where user inputs formula */}
+      <KeyBoard
+        clearState={clearState}
+        handleInput={handleInput}
+        calculateInput={calculateInput}
+      />
     </div>
   );
 };
