@@ -61,6 +61,11 @@ const App = () => {
       inputStr = inputStr.substring(0, inputStr.length - 1);
     }
 
+    //if first inputVal is one of these operator [*/+], do not allow
+    if (operatorNoMinus.includes(inputVal) && inputStr === '') {
+      return;
+    }
+
     //PLUS check if not trig function is followed by an operation
     //such as sin*,cos+, sin/, sin+ etc .  HOWEVER, sin- or cos- is fine
     //ALSO CHECKING if previous input is number ie 2sin or 5cos, must add *
