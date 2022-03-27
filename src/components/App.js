@@ -70,7 +70,11 @@ const App = () => {
       operatorNoMinus.includes(inputVal)
     ) {
       return;
-    } else if (!isNaN(prevInput) && trigOperators.includes(inputVal)) {
+    } else if (
+      !isNaN(prevInput) &&
+      trigOperators.includes(inputVal) &&
+      inputStr !== ''
+    ) {
       //!isNaN true => prevInput is a number, which means we need to
       //add '*' in front of trig function
       inputStr += '*';
