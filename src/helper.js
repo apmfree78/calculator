@@ -49,7 +49,7 @@ export function calcAnswer(formula) {
     answer = answer.replace(/\(([^)(]*)\)/g, (full, formula) =>
       calcAnswer(formula)
     );
-    console.log(answer);
+    // console.log(answer);
   } while (answer !== prevAnswer);
 
   //find trig operations
